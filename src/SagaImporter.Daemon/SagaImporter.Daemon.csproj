@@ -1,0 +1,26 @@
+<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <OutputType>Exe</OutputType>
+    <TargetFramework>net10.0</TargetFramework>
+    <Nullable>enable</Nullable>
+    <ImplicitUsings>enable</ImplicitUsings>
+    <RootNamespace>SagaImporter.Daemon</RootNamespace>
+    <AssemblyName>SagaImporter.Daemon</AssemblyName>
+    <LangVersion>latest</LangVersion>
+    <Version>0.2.0</Version>
+    <Company>Saga Importer contributors</Company>
+    <Product>Saga Importer Daemon</Product>
+    <Description>Headless Linux daemon that watches a Samba inbox folder and imports files into Saga.</Description>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <PackageReference Include="Microsoft.Extensions.Hosting" Version="10.0.0" />
+    <PackageReference Include="Microsoft.Extensions.Hosting.Systemd" Version="10.0.0" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\SagaImporter.Core\SagaImporter.Core.csproj" />
+  </ItemGroup>
+
+</Project>

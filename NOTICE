@@ -1,0 +1,17 @@
+Saga Importer
+Copyright 2026 Saga Importer contributors
+
+This product includes software developed as part of the Saga Importer
+open-source project, licensed under the Apache License, Version 2.0.
+
+This product depends on third-party software with their own licenses:
+
+Windows host (SagaImporter.Windows):
+  - CommunityToolkit.Mvvm (MIT License)
+  - Hardcodet.NotifyIcon.Wpf (CPOL / MIT, see project)
+  - Serilog and Serilog.Sinks.File (Apache License 2.0)
+
+Linux daemon (SagaImporter.Daemon):
+  - Microsoft.Extensions.Hosting (MIT License)
+  - Microsoft.Extensions.Hosting.Systemd (MIT License)
+  - Serilog and Serilog.Sinks.File (Apache License 2.0)

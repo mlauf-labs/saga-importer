@@ -1,0 +1,30 @@
+[Unit]
+Description=Saga Importer Daemon
+Documentation=https://github.com/mlauf-labs/saga-importer
+After=network-online.target
+Wants=network-online.target
+
+[Service]
+Type=notify
+User=@SERVICE_USER@
+Group=@SERVICE_USER@
+ExecStart=@APP_DIR@/SagaImporter.Daemon
+Restart=on-failure
+RestartSec=5s
+
+# Pass settings and log paths via environment
+Environment=SAGA_SETTINGS_PATH=/etc/saga-importer/settings.json
+Environment=SAGA_LOG_DIR=/var/log/saga-importer
+
+# Hardening: restrict what the daemon can reach
+NoNewPrivileges=true
+ProtectSystem=strict
+ProtectHome=true
+PrivateTmp=true
+ReadWritePaths=@INBOX_DIR@ /var/log/saga-importer
+
+# Allow the daemon to read its own config
+ReadOnlyPaths=/etc/saga-importer
+
+[Install]
+WantedBy=multi-user.target

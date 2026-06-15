@@ -1,0 +1,15 @@
+{
+  "watchedFolder": "/srv/saga/inbox",
+  "baseUrl": "http://localhost:8000",
+  "encryptedApiToken": "",
+  "deleteTrigger": 0,
+  "statusPollTimeoutMinutes": 10,
+  "statusPollIntervalSeconds": 3,
+  "rescanIntervalMinutes": 10,
+  "failedSubfolderName": "failed",
+  "includeExtensions": "",
+  "excludeExtensions": ".tmp,.crdownload,.part",
+  "stabilityDelaySeconds": 2,
+  "startWithWindows": false,
+  "smbShareName": "Inbox"
+}

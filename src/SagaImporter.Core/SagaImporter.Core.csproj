@@ -1,0 +1,21 @@
+<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <TargetFramework>net10.0</TargetFramework>
+    <Nullable>enable</Nullable>
+    <ImplicitUsings>enable</ImplicitUsings>
+    <RootNamespace>SagaImporter</RootNamespace>
+    <AssemblyName>SagaImporter.Core</AssemblyName>
+    <LangVersion>latest</LangVersion>
+    <Version>0.2.0</Version>
+    <Company>Saga Importer contributors</Company>
+    <Product>Saga Importer</Product>
+    <Description>Platform-neutral core library: Saga client, import pipeline, folder watcher, queue.</Description>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <PackageReference Include="Serilog" Version="4.2.0" />
+    <PackageReference Include="Serilog.Sinks.File" Version="6.0.0" />
+  </ItemGroup>
+
+</Project>
