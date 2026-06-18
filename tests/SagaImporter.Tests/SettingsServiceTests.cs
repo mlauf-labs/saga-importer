@@ -28,6 +28,7 @@ public class SettingsServiceTests : IDisposable
         Assert.Equal("http://localhost:8000", settings.BaseUrl);
         Assert.Equal(DeleteTrigger.OnReady, settings.DeleteTrigger);
         Assert.Equal(10, settings.RescanIntervalMinutes);
+        Assert.Equal(4, settings.MaxConcurrentImports);
     }
 
     [Fact]
@@ -40,6 +41,7 @@ public class SettingsServiceTests : IDisposable
             BaseUrl = "http://example:9000",
             DeleteTrigger = DeleteTrigger.OnAccepted,
             RescanIntervalMinutes = 5,
+            MaxConcurrentImports = 8,
             ExcludeExtensions = ".tmp",
         };
 
@@ -50,6 +52,7 @@ public class SettingsServiceTests : IDisposable
         Assert.Equal("http://example:9000", loaded.BaseUrl);
         Assert.Equal(DeleteTrigger.OnAccepted, loaded.DeleteTrigger);
         Assert.Equal(5, loaded.RescanIntervalMinutes);
+        Assert.Equal(8, loaded.MaxConcurrentImports);
         Assert.Equal(".tmp", loaded.ExcludeExtensions);
     }
 

@@ -162,6 +162,7 @@ Re-running the script is safe and idempotent.
   "statusPollTimeoutMinutes": 10,
   "statusPollIntervalSeconds": 3,
   "rescanIntervalMinutes": 10,
+  "maxConcurrentImports": 4,
   "failedSubfolderName": "failed",
   "includeExtensions": "",
   "excludeExtensions": ".tmp,.crdownload,.part",
@@ -186,6 +187,7 @@ sudo systemctl restart saga-importer
 | statusPollTimeoutMinutes | Max time to wait for `ready` before treating as failed. | 10 |
 | statusPollIntervalSeconds | Interval between status polls. | 3 |
 | rescanIntervalMinutes | Periodic full folder rescan. | 10 |
+| maxConcurrentImports | How many files to import in parallel (clamped 1–16). Raise to drain a backlog faster. | 4 |
 | failedSubfolderName | Subfolder name for failed files. | `failed` |
 | includeExtensions | Comma-separated allowlist (empty = all). | (empty) |
 | excludeExtensions | Comma-separated blocklist. | `.tmp,.crdownload,.part` |

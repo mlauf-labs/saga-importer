@@ -5,10 +5,11 @@ using SagaImporter.Models;
 namespace SagaImporter.Services;
 
 /// <summary>
-/// A bounded-concurrency (single worker) import queue. De-duplicates files that are
-/// already queued or in flight, supports pause/resume, and processes each item through
-/// the <see cref="ImportPipeline"/>. Keeps the resource footprint low by doing one file
-/// at a time and idling on an async channel when empty.
+/// A concurrent import queue with a configurable degree of parallelism
+/// (<see cref="AppSettings.MaxConcurrentImports"/>). De-duplicates files that are already
+/// queued or in flight, supports pause/resume, and processes each item through the
+/// <see cref="ImportPipeline"/>. Several files can be uploaded/awaited at once to drain a
+/// backlog faster; it idles on an async channel when empty.
 /// </summary>
 public sealed class ImportQueue : IDisposable
 {
@@ -19,7 +20,7 @@ public sealed class ImportQueue : IDisposable
     private readonly Channel<ImportItem> _channel =
         Channel.CreateUnbounded<ImportItem>(new UnboundedChannelOptions
         {
-            SingleReader = true,
+            SingleReader = false,
             SingleWriter = false,
         });
 
@@ -28,7 +29,7 @@ public sealed class ImportQueue : IDisposable
     private readonly ManualResetEventSlim _resumeGate = new(initialState: true);
 
     private CancellationTokenSource? _cts;
-    private Task? _worker;
+    private Task[]? _workers;
 
     public ImportQueue(
         ImportPipeline pipeline,
@@ -57,21 +58,32 @@ public sealed class ImportQueue : IDisposable
         }
     }
 
-    public int Imported { get; private set; }
+    public int Imported => Volatile.Read(ref _imported);
 
-    public int Failed { get; private set; }
+    public int Failed => Volatile.Read(ref _failed);
 
-    public int Skipped { get; private set; }
+    public int Skipped => Volatile.Read(ref _skipped);
+
+    private int _imported;
+    private int _failed;
+    private int _skipped;
 
     public void Start()
     {
-        if (_worker is not null)
+        if (_workers is not null)
         {
             return;
         }
 
+        int concurrency = Math.Clamp(_configProvider().Settings.MaxConcurrentImports, 1, 16);
         _cts = new CancellationTokenSource();
-        _worker = Task.Run(() => RunAsync(_cts.Token));
+        CancellationToken ct = _cts.Token;
+        _log.Info($"Import queue started with {concurrency} concurrent worker(s).");
+        _workers = new Task[concurrency];
+        for (int i = 0; i < concurrency; i++)
+        {
+            _workers[i] = Task.Run(() => RunAsync(ct));
+        }
     }
 
     public void Enqueue(string path)
@@ -167,13 +179,13 @@ public sealed class ImportQueue : IDisposable
         switch (result.Outcome)
         {
             case ImportOutcome.Imported:
-                Imported++;
+                Interlocked.Increment(ref _imported);
                 break;
             case ImportOutcome.Failed:
-                Failed++;
+                Interlocked.Increment(ref _failed);
                 break;
             case ImportOutcome.Skipped:
-                Skipped++;
+                Interlocked.Increment(ref _skipped);
                 break;
         }
 
@@ -187,7 +199,10 @@ public sealed class ImportQueue : IDisposable
         {
             _cts?.Cancel();
             _resumeGate.Set();
-            _worker?.Wait(TimeSpan.FromSeconds(5));
+            if (_workers is { Length: > 0 } workers)
+            {
+                Task.WaitAll(workers, TimeSpan.FromSeconds(5));
+            }
         }
         catch (Exception ex) when (ex is AggregateException or OperationCanceledException)
         {
@@ -195,7 +210,7 @@ public sealed class ImportQueue : IDisposable
         }
         finally
         {
-            _worker = null;
+            _workers = null;
             _cts?.Dispose();
             _cts = null;
         }
