@@ -30,7 +30,7 @@ jobs:
 
       - name: Publish single-file exe
         run: >
-          dotnet publish src/SagaImporter/SagaImporter.csproj
+          dotnet publish src/SagaImporter.Windows/SagaImporter.Windows.csproj
           -c Release -r win-x64 --self-contained true
           -p:PublishSingleFile=true
           -o publish

@@ -42,6 +42,12 @@ public sealed class AppSettings
     /// <summary>Periodic full rescan of the watched folder, in minutes.</summary>
     public int RescanIntervalMinutes { get; set; } = 10;
 
+    /// <summary>
+    /// How many files to import in parallel. Each runs the full upload → poll-until-ready
+    /// pipeline independently, so a higher value speeds up a backlog. Clamped to 1–16.
+    /// </summary>
+    public int MaxConcurrentImports { get; set; } = 4;
+
     public string FailedSubfolderName { get; set; } = "failed";
 
     /// <summary>Comma-separated allowlist of extensions (e.g. ".pdf,.docx"). Empty = all.</summary>
